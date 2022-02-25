@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 18, 2022 at 07:30 PM
+-- Generation Time: Feb 25, 2022 at 01:30 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -33,6 +33,14 @@ CREATE TABLE `cart` (
   `product_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`id`, `user_id`, `product_id`, `quantity`) VALUES
+(1, 1, 9, 5),
+(2, 1, 13, 2);
 
 -- --------------------------------------------------------
 
@@ -111,8 +119,35 @@ INSERT INTO `products` (`id`, `category_id`, `name`, `description`, `slug`, `pri
 CREATE TABLE `sales` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `pay_id` varchar(100) NOT NULL,
-  `sales_date` int(11) NOT NULL DEFAULT current_timestamp()
+  `amount` int(11) NOT NULL,
+  `transaction_id` text NOT NULL,
+  `sales_date` date NOT NULL DEFAULT current_timestamp(),
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `sales`
+--
+
+INSERT INTO `sales` (`id`, `user_id`, `amount`, `transaction_id`, `sales_date`, `status`) VALUES
+(1, 1, 100, '323232ASA', '0000-00-00', 0),
+(2, 5, 230, '323232ASA', '0000-00-00', 0),
+(3, 1, 210, '323232ASA', '0000-00-00', 0),
+(4, 6, 122, '323232ASA', '0000-00-00', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `settings`
+--
+
+CREATE TABLE `settings` (
+  `email` text NOT NULL,
+  `phonenumber` text NOT NULL,
+  `about` text NOT NULL,
+  `sitetags` text NOT NULL,
+  `metadata` text NOT NULL,
+  `title` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -195,7 +230,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -219,7 +254,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
