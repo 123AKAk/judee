@@ -131,7 +131,7 @@
                                             <h6 class="option-title">qty:</h6>
                                             <div class="quantity" id="reloaddiv">
                                                 <div class="pro-qty">
-                                                    <span class="dec qtybtn" onclick="docart('<?php echo $productid; ?>', 'updateCartMinus')">-</span>
+                                                    <span class="dec qtybtn" onclick="docart('<?php echo $productid; ?>', 'updateCartMinus', '<?php echo $item['quantity'] ?>')">-</span>
 
                                                     <input id="quantityinput" type="text" value=" <?php 
                                                         if(isset($_SESSION["cart_item"]))
@@ -154,11 +154,11 @@
                                                         }
                                                     ?>" readonly>
 
-                                                    <span class="inc qtybtn" onclick="docart('<?php echo $productid; ?>', 'updateCartAdd')">+</span>
+                                                    <span class="inc qtybtn" onclick="docart('<?php echo $productid; ?>', 'updateCartAdd', '<?php echo $item['quantity'] ?>')">+</span>
                                                 </div>
                                             </div>
                                             <div class="action_link">
-                                                <a class="btn btn-cart2" href="javascript:void(0)" onclick="docart('<?php echo $productid; ?>', 'addCart')">Add to cart</a>
+                                                <a class="btn btn-cart2" href="javascript:void(0)" onclick="docart('<?php echo $productid; ?>', 'addCart', 99)">Add to cart</a>
                                             </div>
                                         </div>
                                         <div class="like-icon">
@@ -284,7 +284,7 @@
                                                     <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quick_view"><span data-bs-toggle="tooltip" data-bs-placement="left" title="Quick View" onclick="main.LoadProductModal('<?php echo $productid; ?>')"><i class="pe-7s-search"></i></span></a>
                                                 </div>
                                                 <div class="cart-hover">
-                                                    <button class="btn btn-cart" onclick="docart('<?php echo $productid; ?>', 'addCart')">add to cart</button>
+                                                    <button class="btn btn-cart" onclick="docart('<?php echo $productid; ?>', 'addCart', 99)">add to cart</button>
                                                 </div>
                                             </figure>
                                             <div class="product-caption text-center">

@@ -40,7 +40,7 @@
 		$(".off-canvas-wrapper").removeClass('open');
 	});
 
-	// offcanvas mobile menu
+	// offcanvas mobile menu 
     var $offCanvasNav = $('.mobile-menu'),
         $offCanvasNavSubMenu = $offCanvasNav.find('.dropdown');
     

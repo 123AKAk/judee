@@ -97,7 +97,10 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <?php
+                                                            <?php
+                                                            if(isset($_SESSION["cart_item"]))
+                                                            {
+
                                                                 $productsModel = new Products();
 
                                                                 $num = 0;
@@ -144,6 +147,13 @@
                                                                         $cartModel->deleteCart($sharedmodel->protect($item["id"]));
                                                                     }
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                ?>
+                                                                <p>No Current Pending Orders</p>
+                                                                <?php                     
+                                                            }
                                                                 ?>
                                                             </tbody>
                                                         </table>
@@ -174,9 +184,9 @@
             if (isset($SaleData))
             {
                 //sales
-                $userid = $SaleData->User_Id;
+                $userid = $SaleData->userid;
                 $saleamount = $SaleData->Amount;
-                $transactionid = $SaleData->Transaction_Id;
+                $transactionid = $SaleData->transactionid;
                 $sales_date = $SaleData->Sales_Date;
                 $sales_date = new DateTime($sales_date);
                 $salesdate = $sales_date->format('d')." ".$sales_date->format('M')."' ". $sales_date->format('y');
@@ -189,10 +199,11 @@
                     $num = 0;
                     foreach($CartData as $item)
                     {
-                        $productid = $sharedmodel->protect($item["product_id"]);
+                        $productid = $sharedmodel->protect($item["productid"]);
                         $quantity = $item["quantity"];
 
                         //product
+                        $productsModel = new Products();
                         $ProductData = $productsModel->getProductById($productid);
                         
                         $pid = $ProductData->EncryptedId;

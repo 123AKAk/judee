@@ -17,32 +17,39 @@ main.LoadProductModal = function(uniqueId)
 }
 
 //products - cart
-function docart(pid, action)
+function docart(pid, action, quantity)
 {
-    $.post('system/controller/userRequest_handler_get.php', {
-        namespace: action,
-        id: pid
-    },
-    function(result) 
+    if(quantity <= 1 && action == "updateCartMinus")
     {
-        updateDiv();
-        getCartItems();
-        // alert(result);
-        var suq = JSON.parse(result);
+        return;
+    }
+    else
+    {
+        $.post('system/controller/userRequest_handler_get.php', {
+            namespace: action,
+            id: pid
+        },
+        function(result) 
+        {
+            updateDiv();
+            getCartItems();
+            // alert(result);
+            var suq = JSON.parse(result);
 
-        alertify.set({ delay: 10000 });
-        if (suq.response == true) 
-        {
-            if(suq.message != "")
+            alertify.set({ delay: 10000 });
+            if (suq.response == true) 
             {
-                alertify.success(suq.message);
+                if(suq.message != "")
+                {
+                    alertify.success(suq.message);
+                }
+            } 
+            else 
+            {
+                alertify.error(suq.message);
             }
-        } 
-        else 
-        {
-            alertify.error(suq.message);
-        }
-    });
+        });
+    }
 }
 
 function updateDiv()
@@ -56,7 +63,7 @@ function updateDiv()
 function getCartItems()
 {
     $.post('system/controller/userRequest_handler_get.php', {
-        namespace: "getSession"        
+        namespace: "getSession"
     },
     function(result) 
     {
@@ -369,75 +376,6 @@ function userResetPassword()
     }
 }
 
-// make payment with paypal
-function runPayPal()
-{
-    //first version
-    paypal.Buttons({
-        style : {
-            color: 'blue',
-            shape: 'pill'
-        },
-        createOrder: function (data, actions) {
-            return actions.order.create({
-                purchase_units : [{
-                    amount: {
-                        value: '0.1'
-                    }
-                }]
-            });
-        },
-        onApprove: function (data, actions) {
-            return actions.order.capture().then(function (details) {
-                console.log(details)
-                window.location.replace("http://localhost:8081/files/checkout.php   ")
-            })
-        },
-        onCancel: function (data) {
-            window.location.replace("http://localhost:63342/tutorial/paypal/Oncancel.php")
-        }
-    }).render('#paypal-payment-button');
-
-    //second version
-    paypal.Button.render({
-        // Configure environment
-        env: 'sandbox',
-        client: {
-          sandbox: 'demo_sandbox_client_id',
-          production: 'demo_production_client_id'
-        },
-        // Customize button (optional)
-        locale: 'en_US',
-        style: {
-          size: 'small',
-          color: 'gold',
-          shape: 'pill',
-        },
-    
-        // Enable Pay Now checkout flow (optional)
-        commit: true,
-    
-        // Set up a payment
-        payment: function(data, actions) {
-          return actions.payment.create({
-            transactions: [{
-              amount: {
-                total: '0.01',
-                currency: 'USD'
-              }
-            }]
-          });
-        },
-        // Execute the payment
-        onAuthorize: function(data, actions) {
-          return actions.payment.execute().then(function() {
-            // Show a confirmation message to the buyer
-            window.alert('Thank you for your purchase!');
-          });
-        }
-      }, '#paypal-button');
-    
-}
 
 /**
  * 
@@ -541,3 +479,5 @@ main.AjaxOnBegin2 = function AjaxOnBegin2() {
     $('#teambtn-text').addClass('d-none');
     $("#teambtn-create").attr("disabled", "true");
 }
+
+

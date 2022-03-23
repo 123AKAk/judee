@@ -3,7 +3,7 @@
     <div class="scroll-top not-visible">
         <i class="fa fa-angle-up"></i>
     </div>
-    <!-- Scroll to Top End -->
+    <!-- Scroll to Top End --> 
 
     <!-- offcanvas mini cart start -->
     <div class="offcanvas-minicart-wrapper">
@@ -60,7 +60,7 @@
                                         <span class="cart-price"><?php echo "$ ".$price; ?></span>
                                     </p>
                                 </div>
-                                <button class="minicart-remove" onclick="docart('<?php echo $sharedmodel->protect($item['id'])?>', 'deleteCart')"><i class="pe-7s-close"></i></button>
+                                <button class="minicart-remove" onclick="docart('<?php echo $sharedmodel->protect($item['id'])?>', 'deleteCart', 99)"><i class="pe-7s-close"></i></button>
                             </li>
                         </ul>
                     </div>
@@ -91,8 +91,15 @@
 
                     <div class="minicart-button">
                         <a href="cart.php"><i class="fa fa-shopping-cart"></i> View Cart</a>
+                        <?php
+                            if($total_quantity != 0)
+                            {
+                        ?>
                         <a href="checkout.php"><i class="fa fa-share"></i> Checkout</a>
-                        <a href="javascript:void(0)" onclick="docart(0, 'emptyCart')">Empty Cart</a>
+                        <?php
+                            }
+                        ?>
+                        <a href="javascript:void(0)" onclick="docart(0, 'emptyCart', 99)">Empty Cart</a>
                     </div>
                 <?php
                     } 

@@ -10,9 +10,9 @@ class Sales
 	{
         $SalesData =  new stdClass();
 		$SalesData->EncryptedId = "";
-        $SalesData->User_Id = "";
+        $SalesData->userid = "";
 		$SalesData->Amount = "";
-        $SalesData->Transaction_Id = "";
+        $SalesData->transactionid = "";
 		$SalesData->Sales_Date = "";
         return $SalesData;
     }
@@ -32,9 +32,9 @@ class Sales
             foreach($sales as $item)
             {
                 $sales->EncryptedId = $this->SharedComponents()->protect($item["id"]);
-				$sales->User_Id = $item["user_id"];
+				$sales->userid = $item["user_id"];
 				$sales->Amount = $item["amount"];
-				$sales->Transaction_Id = $item["transaction_id"];
+				$sales->transactionid = $item["transaction_id"];
 				$sales->Sales_Date = $item["sales_date"];
                 
                 array_push($Listsales, $sales);
@@ -55,9 +55,9 @@ class Sales
         $sales = new $SalesData;
 		
 		$sales->EncryptedId = $this->SharedComponents()->protect($item["id"]);
-		$sales->User_Id = $item["user_id"];
+		$sales->userid = $item["user_id"];
 		$sales->Amount = $item["amount"];
-        $sales->Transaction_Id = $item["transaction_id"];
+        $sales->transactionid = $item["transaction_id"];
         $sales->Sales_Date = $item["sales_date"];
 
         return $sales;
@@ -74,13 +74,13 @@ class Sales
         return $item;
     }
 
-    public function addSales($user_id, $amount, $transaction_id)
+    public function addSales($userid, $amount, $transactionid)
 	{
 		$db_handle = $this->connection()->open();
 		try
 		{
-			$stmt = $db_handle->prepare("INSERT INTO sales (user_id, amount, transaction_id) VALUES (:user_id, :amount, :transaction_id)");
-			$stmt->execute(['user_id'=>$user_id, 'amount'=>$amount, 'transaction_id'=>$transaction_id]);
+			$stmt = $db_handle->prepare("INSERT INTO sales (user_id, amount, transaction_id) VALUES (:user_id, :amount, :transactionid)");
+			$stmt->execute(['user_id'=>$userid, 'amount'=>$amount, 'transaction_id'=>$transactionid]);
 			
 			$result = ['response' => true, 'message' => '../document_view/sales.php'];
 			return $result;
@@ -97,7 +97,7 @@ class Sales
     }
 
 	//editTeam
-	public function editSales($idds, $user_id, $amount, $transaction_id)
+	public function editSales($idds, $userid, $amount, $transactionid)
 	{
 		$db_handle = $this->connection()->open();
 		try
@@ -105,7 +105,7 @@ class Sales
 			$decryptedId = $this->SharedComponents()->unprotect($idds);
 			
 			$stmt = $db_handle->prepare("UPDATE sales SET user_id=:user_id, amount=:amount, transaction_id=:transaction_id WHERE id = $decryptedId");
-			$stmt->execute(['user_id'=>$user_id, 'amount'=>$amount, 'transaction_id'=>$transaction_id]);
+			$stmt->execute(['user_id'=>$userid, 'amount'=>$amount, 'transaction_id'=>$transactionid]);
 			
 			$result = ['response' => true, 'message' => '../document_view/sales.php'];
 			return $result;

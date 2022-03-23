@@ -116,7 +116,7 @@ if($namespace != '')
 		$email = $_POST['email'];
 		$password = $_POST['password'];
 
-        require '../models/userAccountModel.php';
+        require '../models/userAccountModel.php'; 
         $model = new Users();
         
         $result = $model->verifyUser($email, $password);
@@ -136,13 +136,14 @@ if($namespace != '')
     {
 		$user_id = $_POST['user_id'];
         $transaction_id = $_POST['transaction_id'];
+        $amount = $_POST['amount'];
         $product_id = $_POST['product_id'];
         $quantity = $_POST['quantity'];
 
         require '../models/userAccountModel.php';
         $model = new Users();
         
-        $result = $model->runSales($user_id, $transaction_id, $product_id, $quantity);
+        $result = $model->runSales($user_id, $transaction_id, $amount, $product_id, $quantity);
         echo json_encode($result);
     }
     else

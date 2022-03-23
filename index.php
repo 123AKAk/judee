@@ -302,7 +302,7 @@
                                                     <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quick_view"><span data-bs-toggle="tooltip" data-bs-placement="left" title="Quick View" onclick="main.LoadProductModal('<?php echo $productid; ?>')"><i class="pe-7s-search"></i></span></a>
                                                 </div>
                                                 <div class="cart-hover">
-                                                    <button class="btn btn-cart" onclick="docart('<?php echo $productid; ?>', 'addCart')">add to cart</button>
+                                                    <button class="btn btn-cart" onclick="docart('<?php echo $productid; ?>', 'addCart', 99)">add to cart</button>
                                                 </div>
                                             </figure>
                                             <div class="product-caption text-center">
@@ -400,7 +400,7 @@
                                     <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#quick_view"><span data-bs-toggle="tooltip" data-bs-placement="left" title="Quick View"><i class="pe-7s-search" onclick="main.LoadProductModal('<?php echo $productid; ?>')"></i></span></a>
                                 </div>
                                 <div class="cart-hover">
-                                    <button class="btn btn-cart" onclick="docart('<?php echo $productid; ?>', 'addCart')">add to cart</button>
+                                    <button class="btn btn-cart" onclick="docart('<?php echo $productid; ?>', 'addCart', 99)">add to cart</button>
                                 </div>
                             </figure>
                             <div class="product-caption text-center">

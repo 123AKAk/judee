@@ -8,10 +8,7 @@
     include 'includes/header.php';
     include 'includes/navbar.php';
 
-	// if(!isset($_SESSION['user']))
-	// {
-	// 	echo("<script>location.href = 'index.php';</script>");
-	// }
+	
  ?>
     <main>
         <!-- breadcrumb area start -->
@@ -48,33 +45,75 @@
 									<div class="container">
 										<div class="col">
 											<?php
-												$usersModel = new Users();
+                                                if (isset($_GET['datasale']) && isset($_GET['transactionid']) && isset($_GET['userid']) && isset($_GET['amount']))
+                                                {
+                                                    $datasales = $_GET['datasale'];
+                                                    $transactionid = $_GET['transactionid'];
+                                                    $userid = $sharedmodel->unprotect($_GET['userid']);
+                                                    $amount = $_GET['amount'];
 
-												$output = '';
+                                                    $newarray = unserialize(urldecode($datasales));
 
-												if(!isset($_GET['code']) OR !isset($_GET['user']))
-												{
-													echo $output = '
-														<div class="alert alert-danger">
-															<h4><i class="icon fa fa-warning"></i> Error!</h4>
-															Code to activate account not found.
-														</div>
-														<p>You may <a href="signup.php">Signup</a> or back to <a href="index.php">Homepage</a>.</p>
-													';
-												}
-												else
-												{
-													$userdata = $usersModel->activateUser($_GET['code'], $sharedmodel->protect($_GET['user']));
-                
-													if (isset($userdata))
-													{
-														echo $userdata;
-													}
-													else
-													{
+                                                    //formats the array
+                                                    function array_custom($arraynew)
+                                                    {
+                                                        $result = [];
+                                                        foreach ($arraynew as $key=>$value)
+                                                        {
+                                                            foreach($value as $k=>$v)
+                                                            {
+                                                                $result[$k] = $v;
+                                                            }
+                                                        }
+                                                        return $result;
+                                                    }
 
-													}
-												}
+                                                    require_once('system/models/userProductModel.php');
+                                                    $productsModel = new Products();
+
+                                                    //insert sales data to database
+                                                    $runsaledata = $productsModel->runSales($userid, $amount, $transactionid);
+                                                    if (isset($runsaledata))
+                                                    {
+                                                        echo json_encode($runsaledata);echo "<br>";echo "<Hr>";
+
+                                                        //gets the data from the array to format
+                                                        $keys = array_keys($newarray);
+                                                        for($i = 0; $i < count($newarray); $i++)
+                                                        {
+                                                            $merge = array();
+                                                            foreach($newarray[$keys[$i]] as $key => $value)
+                                                            {
+                                                                $merge[] = [$key=>$value];
+                                                                //$merge[] = $value;
+                                                                //$merge[] = array($key=>$value);
+                                                            }
+
+                                                            //insert cart data to database
+                                                            $runcartdata = $productsModel->runCartSales(array_custom($merge));
+
+                                                            if (isset($runcartdata))
+                                                            {
+                                                                json_encode($runcartdata);
+                                                            }
+                                                            else
+                                                            {
+                                                                echo "Error Getting Feedback Response";
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        echo "Error Getting Feedback Response (Reporting Sales)";
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    echo "Invalid Response <br><br>";
+                                                    echo "Redirecting...";
+
+                                                    echo("<script> setTimeout(function(){location.replace('./');},1500)</script>");
+                                                }
 											 ?>
 										</div>
 									</div>
@@ -93,6 +132,13 @@
         include 'includes/footer.php';
         include 'includes/modal.php';
         include 'includes/scripts.php';
-    ?>
 
+        if (isset($runcartdata))
+        {
+            json_encode($runcartdata);
+    ?>
+        <script type="text/javascript"> docart(0, "emptyCart", 99); </script>
+    <?php
+        }
+    ?>
 </html>

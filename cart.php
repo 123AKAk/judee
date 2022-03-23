@@ -109,18 +109,17 @@
                                             </td>
 
                                             <td class="pro-quantity">
-                                                <div class="pro-qty">
-                                                    <span class="dec qtybtn" onclick="docart('<?php echo $sharedmodel->protect($item['id'])?>', 'updateCartMinus')">-</span>
+                                                <div class="pro-qty" style="width:100px">
+                                                    <span class="dec qtybtn" onclick="docart('<?php echo $sharedmodel->protect($item['id'])?>', 'updateCartMinus', '<?php echo $item['quantity'] ?>')">-</span>
                                                     <input id="quantityinput" type="text" value="<?php echo $item["quantity"] ?>" readonly>
-                                                    <span class="inc qtybtn" onclick="docart('<?php echo $sharedmodel->protect($item['id'])?>', 'updateCartAdd')">+</span>
+                                                    <span class="inc qtybtn" onclick="docart('<?php echo $sharedmodel->protect($item['id'])?>', 'updateCartAdd', '<?php echo $item['quantity'] ?>')">+</span>
                                                 </div>
                                             </td>
-
                                             <td class="pro-subtotal">
                                                 <span><?php echo "$ ". number_format($item_price,2); ?>  <?php //echo $item["quantity"] ?> </span>
                                             </td>
                                             <td class="pro-remove">
-                                                <a href="javascript:void(0)" onclick="docart('<?php echo $sharedmodel->protect($item['id'])?>', 'deleteCart')">
+                                                <a href="javascript:void(0)" onclick="docart('<?php echo $sharedmodel->protect($item['id'])?>', 'deleteCart', 99)">
                                                     <i class="fa fa-trash-o"></i>
                                                 </a>
                                             </td>
@@ -143,7 +142,7 @@
                             <!-- Cart Update Option -->
                             <div class="cart-update-option d-block d-md-flex justify-content-between">
                                 <div class="cart-update">
-                                    <a href="javascript:void(0)" class="btn btn-sqr" onclick="docart(0, 'emptyCart')">Empty Cart</a>
+                                    <a href="javascript:void(0)" class="btn btn-sqr" onclick="docart(0, 'emptyCart', 99)">Empty Cart</a>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +174,14 @@
                                         </table>
                                     </div>
                                 </div>
+                                <?php
+                                    if($total_quantity != 0)
+                                    {
+                                ?>
                                 <a href="checkout.php" class="btn btn-sqr d-block">Proceed Checkout</a>
+                                <?php
+                                    }
+                                ?>
                             </div>
                         </div>
                     </div>

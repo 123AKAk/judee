@@ -136,7 +136,7 @@
                                             <div class="button-group">
                                             </div>
                                             <div class="cart-hover">
-                                                <button class="btn btn-cart" onclick="docart('<?php echo $productid; ?>', 'addCart')">add to cart</button>
+                                                <button class="btn btn-cart" onclick="docart('<?php echo $productid; ?>', 'addCart', 99)">add to cart</button>
                                             </div>
                                         </figure>
                                         <div class="product-caption text-center">

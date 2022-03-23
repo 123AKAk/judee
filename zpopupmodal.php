@@ -66,7 +66,7 @@
                                 <div class="pro-qty"><input type="text" value="1" readonly  ></div>
                             </div>
                             <div class="action_link">
-                                <a class="btn btn-cart2" href="javascript:void(0)" onclick="docart('<?php echo $productid; ?>', 'addCart')">Add to cart</a>
+                                <a class="btn btn-cart2" href="javascript:void(0)" onclick="docart('<?php echo $productid; ?>', 'addCart', 99)">Add to cart</a>
                             </div>
                         </div>
                     </div>

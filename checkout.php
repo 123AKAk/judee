@@ -40,8 +40,11 @@
                         <!-- Checkout Login Start -->
                         <div class="checkoutaccordion" id="checkOutAccordion">
                             <div class="card">
-                                <h6>Returning Customer? <span data-bs-toggle="collapse" data-bs-target="#logInaccordion">Click
-                                            Here To Login</span></h6>
+                                <h6>Returning Customer?
+                                    <span data-bs-toggle="collapse" data-bs-target="#logInaccordion">
+                                        Click Here To Login
+                                    </span>
+                                </h6>
                                 <div id="logInaccordion" class="collapse" data-parent="#checkOutAccordion">
                                     <div class="card-body">
                                         <p>If you have shopped with us before, please enter your details in the boxes
@@ -79,7 +82,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                             </div>
                         </div>
                         <!-- Checkout Login Coupon Accordion End -->
@@ -207,6 +209,7 @@
                                         </thead>
                                         <tbody>
                                         <?php
+                                            $datasales = array();
                                             foreach ($_SESSION["cart_item"] as $item)
                                             {
                                                 $productsModel = new Products();
@@ -215,6 +218,7 @@
 
                                                 if (isset($ProductData))
                                                 {
+                                                    $productid = $sharedmodel->unprotect($ProductData->EncryptedId);
                                                     $categoryid = $ProductData->Category_Id;
                                                     $category = $ProductData->Category_Id;
                                                     $name = $ProductData->Name;
@@ -227,11 +231,25 @@
                                                     $catname = implode(" ",$result = $sharedmodel->getCategoryName($category));
 
                                                     $item_price = $item["quantity"]*$price;
+
+                                                    //add data to an array
+                                                    $maindata = ['userid' => $_SESSION['user'], 'productid' => $productid, 'name' => $name, 'price' => $item_price, 'quantity' => $item["quantity"]];
+                                                    
+                                                    $datasales[] = $maindata;
+
                                             ?>
                                             <tr>
-                                                <td><a href="product-details.php"><?php echo $name; ?><strong> × <?php echo $item["quantity"] ?></strong></a>
+                                                <td>
+                                                    <a href="product-details.php">
+                                                        <?php echo $name; ?>
+                                                        <strong>
+                                                             × <?php echo $item["quantity"] ?>
+                                                        </strong>
+                                                    </a>
                                                 </td>
-                                                <td><?php echo "$ ". number_format($item_price,2); ?></td>
+                                                <td>
+                                                    <?php echo "$ ". number_format($item_price,2); ?>
+                                                </td>
                                             </tr>
                                             <?php
                                                     $total_quantity += $item["quantity"];
@@ -239,6 +257,9 @@
                                                     }
                                                 }
                                             ?>
+                                            <input type="hidden" id="datasale" value="<?php echo urlencode(serialize($datasales)) ?>" style="display:none">
+                                            <input type="hidden" id="userid" value="<?php echo $sharedmodel->protect($_SESSION['user']) ?>" style="display:none">
+                                            <input type="hidden" id="total_price" value="<?php echo $total_price ?>" style="display:none">
                                         </tbody>
                                         <tfoot>
                                             <tr>
@@ -252,7 +273,7 @@
                                             <tr>
                                                 <td>Total Amount</td>
                                                 <td>
-                                                    <strong>
+                                                    <strong id="totalAmt">
                                                     <?php echo "$ ".number_format($total_price, 2); ?>
                                                     </strong>
                                                 </td>
@@ -260,10 +281,11 @@
                                         </tfoot>
                                     </table>
                                     <?php
-                                        } 
+                                        }
                                         else 
                                         {
                                     ?>
+                                        <br>
                                         <div class="text-center"><h3>Your Cart is Empty</h3></div>
                                     <?php 
                                         }
@@ -278,21 +300,56 @@
                                                 the website <a href="privacypolicy.php">privacy and policy.</a></label>
                                         </div>
                                         
-                                        <?php 
+                                        <?php
+                                        if(isset($_SESSION["cart_item"]))
+                                        {
                                             if(!isset($_SESSION['user']))
                                             {
                                         ?>
                                             <button onclick="addbillingdetails('billingdetails')" class="btn btn-sqr">Place Order</button>
+
+                                            <button onclick="testorder()" class="btn btn-sqr">Test Order</button>
+
+                                            <div id="smart-button-container">
+                                            <div style="text-align: center;">
+                                            <div id="paypal-button-container"></div>
+                                            </div>
+                                        </div>
                                         <?php 
                                             }
                                             else
                                             {
                                         ?>
                                             <button onclick="updatebillingdetails('billingdetails')" class="btn btn-sqr">Place Order</button>
+
+                                            <button onclick="testorder()" class="btn btn-sqr">Test Order</button>
+
+                                            <script>
+                                                //transfer payment details to payment successful page after payment has been made
+                                                function testorder()
+                                                {
+                                                    let datasale = document.getElementById("datasale").value;
+                                                    let userid = document.getElementById("userid").value;
+                                                    let total_price = document.getElementById("total_price").value;
+
+                                                    location.href="paymentsuccess.php?datasale="+datasale+"&transactionid=10101010&userid="+userid+"&amount="+total_price;
+                                                }
+                                            </script>
+
                                             <!-- <div id="paypal-button-container"></div> -->
-                                            <div id="paypal-payment-button"></div>
+                                            <!-- <div id="paypal-payment-button"></div> -->
+                                            <div id="smart-button-container">
+                                            <div style="text-align: center;">
+                                            <div id="paypal-button-container"></div>
+                                            </div>
+                                        </div>
                                         <?php
                                             }
+                                        }
+                                        else
+                                        {
+                                            echo '<div class="text-center" style="color:red;"><p>You cannot check because your cart is empty</p></div>';
+                                        }
                                         ?>
                                     </div>
                                 </div>
@@ -306,37 +363,58 @@
     </main>
 
     <!-- <script src="https://www.paypal.com/sdk/js?client-id=AYEQPezUnDYm8QqAR5ZREWtQFekfK8DgpniGSc5wt7fo-99zPR9YiHipmhmsbnr4hIYA3pl0SqeVF9JR&currency=USD"></script> -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AYEQPezUnDYm8QqAR5ZREWtQFekfK8DgpniGSc5wt7fo-99zPR9YiHipmhmsbnr4hIYA3pl0SqeVF9JR&disable-funding=credit,card"></script>
+    <!-- <script src="https://www.paypal.com/sdk/js?client-id=AYEQPezUnDYm8QqAR5ZREWtQFekfK8DgpniGSc5wt7fo-99zPR9YiHipmhmsbnr4hIYA3pl0SqeVF9JR&disable-funding=credit,card"></script> -->
+
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
 <script>
-    paypal.Buttons({
-        style : {
-            color: 'blue',
-            shape: 'pill'
-        },
-        createOrder: function (data, actions) 
-        {
-            return actions.order.create({
-                purchase_units : [{
-                    amount: {
-                        value: '0.1'
-                    }
-                }]
-            });
-        },
-        onApprove: function (data, actions) 
-        {
-            return actions.order.capture().then(function (details) 
-            {
-                console.log(details)
-                //window.location.replace("http://localhost:63342/tutorial/paypal/success.php")
-            })
-        },
-        onCancel: function (data) 
-        {
-            //window.location.replace("http://localhost:63342/tutorial/paypal/Oncancel.php")
+    function initPayPalButton() 
+    {
+        let totalAmt = document.getElementById("totalAmt").innerHTML.replaceAll("$",'').replaceAll(",",'');
+        let totalAmt_in_integer = parseInt(totalAmt)
+        console.log(totalAmt_in_integer);
+            paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'gold',
+                layout: 'vertical',
+                label: 'paypal',
+                
+            },
+    
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                purchase_units: [{"amount":{"currency_code":"USD","value":totalAmt_in_integer}}]
+                });
+            },
+    
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(orderData) {
+                
+                // Full available details
+                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+    
+                // Show a success message within this page, e.g.
+                const element = document.getElementById('paypal-button-container');
+                element.innerHTML = '<?php ?>';
+                element.innerHTML = '<h3>Thank you for your payment!</h3>';
+    
+                // Or go to another URL:  
+
+                let datasale = document.getElementById("datasale").value;
+                let userid = document.getElementById("userid").value;
+
+                actions.redirect('paymentsuccess.php?datasale='+datasale+'&transactionid=10101010&userid='+userid);
+                });
+            },
+    
+            onError: function(err) {
+                console.log(err);
+            }
+            }).render('#paypal-button-container');
         }
-    }).render('#paypal-payment-button');
+        initPayPalButton();
 </script>
+
     <?php
         include 'includes/footer.php';
         include 'includes/modal.php';

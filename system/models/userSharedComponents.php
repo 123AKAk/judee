@@ -184,8 +184,8 @@ class SharedComponents
     {
         $db_handle = $this->connection()->open();
 
-        $astmt = $db_handle->prepare("SELECT * FROM cart WHERE user_id=:user_id ORDER BY id DESC");
-        $astmt->execute(['user_id' => $this->unprotect($idds)]);
+        $astmt = $db_handle->prepare("SELECT * FROM cart WHERE userid=:userid ORDER BY id DESC");
+        $astmt->execute(['userid' => $this->unprotect($idds)]);
         $item = $astmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $item;

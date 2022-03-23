@@ -69,18 +69,19 @@ class Carting
 				if($decryptedId == $v["id"])
 				{
 					unset($_SESSION["cart_item"][$k]);
-					session_write_close();
-					$result = ['response' => true, 'message' => 'Product Removed from Cart'];	
-				}
-
-				if(empty($_SESSION["cart_item"]))
-				{
-					unset($_SESSION["cart_item"]);
-					session_write_close();
-					// $result = ['response' => true, 'message' => 'Cart Emptied'];
+					if(empty($_SESSION["cart_item"]))
+					{
+						unset($_SESSION["cart_item"]);
+						$result = ['response' => true, 'message' => 'Cart Emptied'];
+					}
+					else
+					{
+						$result = ['response' => true, 'message' => 'Product Removed from Cart'];
+					}
 				}
 			}
 		}
+		session_write_close();
 		return $result;
 	}
 

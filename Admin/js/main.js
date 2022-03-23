@@ -165,7 +165,7 @@ main.doDeleteProduct = function(uniqueId, catidds) {
 }
 
 //delete sale
-main.doDeleteSale = function(uniqueId) {
+function doDeleteSale(uniqueId) {
     swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this Sale record",
@@ -200,7 +200,7 @@ main.doDeleteSale = function(uniqueId) {
 
 
 //delete user
-main.doDeleteUser = function(uniqueId) {
+function doDeleteUser(uniqueId) {
     swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this User Data",

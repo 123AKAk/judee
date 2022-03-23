@@ -97,6 +97,51 @@ class Products
 		}
     }
 
+	//function runCartSales($user_id, $product_id, $price, $quantity)
+	function runCartSales($array)
+    {
+        $db_handle = $this->connection()->open();
+        try
+        {
+            $stmt = $db_handle->prepare("INSERT INTO cart (userid, productid, name, price, quantity) VALUES (:userid, :productid, :name, :price, :quantity)");
+            $stmt->execute($array);
+
+            $result = ['response' => true, 'message' => 'Updated Active Cart'];
+			return $result;
+        }
+        catch(PDOException $ex)
+        {
+            $result = ['response' => false, 'message' => 'Error '.$ex];
+			return $result;
+        }
+        finally
+        {
+            $this->connection()->close();
+        }
+    }
+
+	function runSales($userid, $amount, $transactionid)
+    {
+        $db_handle = $this->connection()->open();
+        try
+        {
+            $stmt = $db_handle->prepare("INSERT INTO sales (user_id, amount, transaction_id) VALUES (:user_id, :amount, :transaction_id)");
+            $stmt->execute(['user_id'=>$userid, 'amount'=>$amount, 'transaction_id'=>$transactionid]);
+
+			$result = ['response' => true, 'message' => 'Your Order has been submitted'];
+			return $result;
+        }
+        catch(PDOException $ex)
+        {
+			$result = ['response' => false, 'message' => 'Error '.$ex];
+			return $result;
+        }
+        finally
+        {
+            $this->connection()->close();
+        }
+    }
+
 	function searchProduct()
 	{
 		

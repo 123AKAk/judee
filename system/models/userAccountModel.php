@@ -691,9 +691,5 @@ class Users
 		}
     }
 
-    function runSales($user_id, $transaction_id, $product_id, $quantity)
-    {
-
-    }
 }
 ?>
