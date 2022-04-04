@@ -9,9 +9,67 @@
 
     $sharedComponentsModel = new SharedComponents();
     $userModel = new Users();
+    define("ROW_PER_PAGE",10);
+    
+    $database_username = 'root';
+	$database_password = '';
+	$pdo_conn = new PDO( 'mysql:host=localhost;dbname=eyocommerce', $database_username, $database_password );
 ?>
 
+<style>
+.button_link {color:#FFF;text-decoration:none; background-color:#428a8e;padding:10px;}
+#keyword{border: #CCC 1px solid; border-radius: 4px; padding: 7px;background:url("demo-search-icon.png") no-repeat center right 7px; color:gray; width:30%; float:right;}
+#keyword:focus {outline: 1px solid gray; }
+.btn-page{margin-right:10px;padding:5px 10px; border: #CCC 1px solid; background:#FFF; border-radius:4px;cursor:pointer;}
+.btn-page:hover{background:#F0F0F0;}
+.btn-page.current{background:#F0F0F0;}
+</style>
+
 <body id="page-top">
+
+<?php	
+	$search_keyword = '';
+	if(!empty($_POST['search']['keyword'])) {
+		$search_keyword = $_POST['search']['keyword'];
+	}
+	
+	$sql = 'SELECT * FROM users WHERE email LIKE :keyword OR fullname LIKE :keyword OR address LIKE :keyword OR country LIKE :keyword OR town_city LIKE :keyword OR contact_info LIKE :keyword OR ordernote LIKE :keyword OR created_on LIKE :keyword ORDER BY id DESC ';
+	
+	/* Pagination Code starts */
+	$per_page_html = '';
+	$page = 1;
+	$start=0;
+	if(!empty($_POST["page"])) {
+		$page = $_POST["page"];
+		$start=($page-1) * ROW_PER_PAGE;
+	}
+	$limit=" limit " . $start . "," . ROW_PER_PAGE;
+	$pagination_statement = $pdo_conn->prepare($sql);
+	$pagination_statement->bindValue(':keyword', '%' . $search_keyword . '%', PDO::PARAM_STR);
+	$pagination_statement->execute();
+
+	$row_count = $pagination_statement->rowCount();
+	if(!empty($row_count)){
+		$per_page_html .= "<div style='text-align:center;margin:20px 0px;'>";
+		$page_count=ceil($row_count/ROW_PER_PAGE);
+		if($page_count>1) {
+			for($i=1;$i<=$page_count;$i++){
+				if($i==$page){
+					$per_page_html .= '<input type="submit" name="page" value="' . $i . '" class="btn-page current" />';
+				} else {
+					$per_page_html .= '<input type="submit" name="page" value="' . $i . '" class="btn-page" />';
+				}
+			}
+		}
+		$per_page_html .= "</div>";
+	}
+	
+	$query = $sql.$limit;
+	$pdo_statement = $pdo_conn->prepare($query);
+	$pdo_statement->bindValue(':keyword', '%' . $search_keyword . '%', PDO::PARAM_STR);
+	$pdo_statement->execute();
+	$result = $pdo_statement->fetchAll();
+?>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -49,12 +107,21 @@
                                 class="fas fa-plus fa-sm text-white-50"></i> Register new User account</a>
                     </div>
                         <div class="table-striped table-responsive">
+                        <form name='frmSearch' action='' method='post'>
+                        <div style='text-align:right;margin:20px 0px;'>
+                            <input class="mb-2" placeholder="Search Keyword" type='text' name='search[keyword]' value="<?php echo $search_keyword; ?>" id='keyword' maxlength='35'/>
+                        </div>
+                        <?php
+                            if(!empty($result)) 
+                            {
+                        ?>
                         <table class="table">
                             <thead>
                                 <tr>
                                 <th scope="col">S/N</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Full Name</th>
+                                <th scope="col">Phone Number</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Date Created</th>
                                 <th scope="col">Action</th>
@@ -62,16 +129,29 @@
                             </thead>
                             <tbody>
                                 <?php
-                                    $users = $model->getData("SELECT * FROM users");
-
-                                    if(isset($users))
+                                    $num = 0;
+                                    foreach($result as $row) 
                                     {
-                                        $num = 0;
-                                        foreach($users as $row)
-                                        {
+
+                                    //**
+                                    // OLD PHP CODE FOR GETTING DATA FROM DB
+                                    // $users = $model->getData("SELECT * FROM users");
+
+                                    // if(isset($users))
+                                    // {
+                                    //     $num = 0;
+                                    //     foreach($users as $row)
+                                    //     {
                                             $userid = $model->protect($row["id"]);
                                             $email = $row['email'];
                                             $fullname = $row['fullname'];
+                                            $phonenumber = $row['contact_info'];
+
+                                            $address = $row['address'];
+                                            $town_city = $row['town_city'];
+                                            $country = $row['country'];
+                                            $zipcode = $row['zipcode'];
+
                                             $status = $row['status'];
                                             //$maindate = date('Y-m-d', strtotime($row['created_on']));
                                             $date = strtotime($row['created_on']);
@@ -85,7 +165,10 @@
                                         <a href="mailto:<?php echo $email ?>"><?php echo $email ?></a>
                                     </td>
                                     <td>
-                                        <b><?php echo $fullname ?></b>
+                                        <b title="<?php echo $address.", | ".$town_city.", | " .$country?>" ><?php echo $fullname ?></b>
+                                    </td>
+                                    <td>
+                                        <b title="<?php echo $zipcode ?>" ><?php echo $phonenumber ?></b>
                                     </td>
                                     <td>
                                         <?php 
@@ -116,33 +199,37 @@
                                     </td>
                                 </tr>
                                 <?php
-                                        }
-                                    }
-                                    else
-                                    {
-                                ?>
-                                <div class="col-12">
-                                    <div class="">
-                                        <div class="card-header" style="border:none">
-                                            <div class="row align-items-center" style="text-align:center;">
-                                                <div class="col">
-                                                    <!-- Title -->
-                                                    <br>
-                                                    <br>
-                                                    <br>
-                                                    <h4 class="card-header-title text-muted">
-                                                        Ooops! sorry no record at the moment
-                                                    </h4>
-                                                </div>
-                                            </div> <!-- / .row -->
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php
                                 }
                                 ?>
                             </tbody>
                             </table>
+                            <?php
+                                }
+                                else
+                                {
+                            ?>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="card-header" style="border:none">
+                                        <div class="row align-items-center" style="text-align:center;">
+                                            <div class="col">
+                                                <!-- Title -->
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <h4 class="card-header-title text-muted">
+                                                    Ooops! sorry no record at the moment
+                                                </h4>
+                                            </div>
+                                        </div> <!-- / .row -->
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                            }
+                            ?>
+                            <?php echo $per_page_html; ?>
+                            </form>
                         </div>
                     </div>
                 </div>

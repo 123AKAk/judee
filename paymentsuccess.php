@@ -7,8 +7,6 @@
     require_once('system/database/conn.php');
     include 'includes/header.php';
     include 'includes/navbar.php';
-
-	
  ?>
     <main>
         <!-- breadcrumb area start -->
@@ -20,7 +18,7 @@
                             <nav aria-label="breadcrumb">
                                 <ul class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="index.php"><i class="fa fa-home"></i></a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Payment Successful</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Payment Successful Page</li>
                                 </ul>
                             </nav>
                         </div>
@@ -35,7 +33,13 @@
             <div class="container">
                 <div class="member-area-from-wrap">
                     <div class="">
-
+<?php
+    //echo urlencode(serialize($datasales))
+    if(isset($_SESSION["cart_item"]))
+    {
+        if(isset($_GET['transactionid']) && isset($_GET['userid']) && isset($_GET['amount']))
+        {
+?>
                         <!-- Register Content Start -->
                         <div class="col">
 							<h4 class="mb-3 text-center">Payment Successful</h4>
@@ -44,77 +48,113 @@
 								<section class="">
 									<div class="container">
 										<div class="col">
-											<?php
-                                                if (isset($_GET['datasale']) && isset($_GET['transactionid']) && isset($_GET['userid']) && isset($_GET['amount']))
-                                                {
-                                                    $datasales = $_GET['datasale'];
-                                                    $transactionid = $_GET['transactionid'];
-                                                    $userid = $sharedmodel->unprotect($_GET['userid']);
-                                                    $amount = $_GET['amount'];
+<?php
+            $transactionid = $_GET['transactionid'];
+            $userid = $sharedmodel->unprotect($_GET['userid']);
+            $amount = $_GET['amount'];
 
-                                                    $newarray = unserialize(urldecode($datasales));
+            $datasales = array();
+            foreach ($_SESSION["cart_item"] as $item)
+            {
+                $productsModel = new Products();
 
-                                                    //formats the array
-                                                    function array_custom($arraynew)
-                                                    {
-                                                        $result = [];
-                                                        foreach ($arraynew as $key=>$value)
-                                                        {
-                                                            foreach($value as $k=>$v)
-                                                            {
-                                                                $result[$k] = $v;
-                                                            }
-                                                        }
-                                                        return $result;
-                                                    }
+                $ProductData = $productsModel->getProductById($sharedmodel->protect($item["id"]));
 
-                                                    require_once('system/models/userProductModel.php');
-                                                    $productsModel = new Products();
+                if (isset($ProductData))
+                {
+                    $productid = $sharedmodel->unprotect($ProductData->EncryptedId);
+                    $categoryid = $ProductData->Category_Id;
+                    $category = $ProductData->Category_Id;
+                    $name = $ProductData->Name;
+                    $description = $ProductData->Description;
+                    $slug = $ProductData->Slug;
+                    $price = $ProductData->Price;
+                    
+                    $item_price = $item["quantity"]*$price;
 
-                                                    //insert sales data to database
-                                                    $runsaledata = $productsModel->runSales($userid, $amount, $transactionid);
-                                                    if (isset($runsaledata))
-                                                    {
-                                                        echo json_encode($runsaledata);echo "<br>";echo "<Hr>";
+                    //add data to an array
+                    $maindata = ['userid' => $userid, 'productid' => $productid, 'name' => $name, 'price' => $item_price, 'quantity' => $item["quantity"]];
+                    
+                    $datasales[] = $maindata;
+                }
+            }
 
-                                                        //gets the data from the array to format
-                                                        $keys = array_keys($newarray);
-                                                        for($i = 0; $i < count($newarray); $i++)
-                                                        {
-                                                            $merge = array();
-                                                            foreach($newarray[$keys[$i]] as $key => $value)
-                                                            {
-                                                                $merge[] = [$key=>$value];
-                                                                //$merge[] = $value;
-                                                                //$merge[] = array($key=>$value);
-                                                            }
+            if (isset($datasales))
+            {
+                $newarray = $datasales;
+                //$newarray = unserialize(urldecode($datasales));
 
-                                                            //insert cart data to database
-                                                            $runcartdata = $productsModel->runCartSales(array_custom($merge));
+                //formats the array
+                function array_custom($arraynew)
+                {
+                    $result = [];
+                    foreach ($arraynew as $key=>$value)
+                    {
+                        foreach($value as $k=>$v)
+                        {
+                            $result[$k] = $v;
+                        }
+                    }
+                    return $result;
+                }
 
-                                                            if (isset($runcartdata))
-                                                            {
-                                                                json_encode($runcartdata);
-                                                            }
-                                                            else
-                                                            {
-                                                                echo "Error Getting Feedback Response";
-                                                            }
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        echo "Error Getting Feedback Response (Reporting Sales)";
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    echo "Invalid Response <br><br>";
-                                                    echo "Redirecting...";
+                require_once('system/models/userProductModel.php');
+                $productsModel = new Products();
 
-                                                    echo("<script> setTimeout(function(){location.replace('./');},1500)</script>");
-                                                }
-											 ?>
+                //insert sales data to database
+                $runsaledata = $productsModel->runSales($userid, $amount, $transactionid);
+                if (isset($runsaledata))
+                {
+                    echo $runsaledata["message"];
+                    
+                    echo "<br>";echo "<Hr>";
+
+                    //gets the data from the array to format
+                    $keys = array_keys($newarray);
+                    for($i = 0; $i < count($newarray); $i++)
+                    {
+                        $merge = array();
+                        foreach($newarray[$keys[$i]] as $key => $value)
+                        {
+                            $merge[] = [$key=>$value];
+                            //$merge[] = $value;
+                            //$merge[] = array($key=>$value);
+                        }
+
+                        //insert cart data to database
+                        $runcartdata = $productsModel->runCartSales(array_custom($merge));
+
+                        if (isset($runcartdata))
+                        {
+                            //echo $runcartdata["message"];
+                        }
+                        else
+                        {
+                            echo "Error Getting Feedback Response";
+                        }
+                    }
+                }
+                else
+                {
+                    echo "Error Getting Feedback Response (Reporting Sales)";
+                }
+            }
+            else
+            {
+                echo "Invalid Response <br><br>";
+                echo "Redirecting...";
+
+                echo("<script> setTimeout(function(){location.replace('./');},1500)</script>");
+            }
+        }
+    }
+    else
+    {
+        echo "<b>Error Getting User Cart Details, you might have made payment or you have no Item in your Cart</b>";
+        echo "<br>";
+        echo "<p>Click <a href='./'>here</a> to go to the <a href='./'>Home Page</a></p>";
+    }
+?>
 										</div>
 									</div>
 								</section>

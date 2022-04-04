@@ -150,6 +150,22 @@ function addbillingdetails(formId)
     }
 }
 
+function testorder()
+{
+    let userid = document.getElementById("userid").value;
+    if(userid==""){
+        alert("User Authentication Error");
+        return;
+    }
+    //let transactionid = document.getElementById("transactionid").value;
+    let transactionid = "112345012";
+
+    let totalAmt = document.getElementById("totalAmt").innerHTML.replaceAll("$",'').replaceAll(",",'');
+    let totalAmt_in_integer = parseInt(totalAmt)
+    console.log(totalAmt_in_integer);
+    location.href="paymentsuccess.php?transactionid="+transactionid+"&userid="+userid+"&amount="+totalAmt_in_integer;
+}
+
 function updatebillingdetails(formId)
 {
     var fullname = $("#fullname").val();
@@ -405,14 +421,15 @@ main.AjaxOnAddingSucess2 = function AjaxOnSucess(result)
     var suq = JSON.parse(result);
 
     if (suq.response == true) 
-    {
+    {   
         //alertify.set({ delay: 90000 });
-        alertify.success(suq.message+"madd1");
+        alertify.success(suq.message);
     }
     else
     {
         alertify.error(suq.message);
     }
+    document.getElementById("userid").value = suq.usercode;
 }
 
 main.AjaxOnSettingAdded = function AjaxOnSettingAdded(result) {

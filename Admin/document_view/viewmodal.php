@@ -42,7 +42,7 @@
         {
 ?>
 <p style="color:darkred;">Note: If the Product name or Category is changed on the Product section it reflects here too</p>
-<div class="table-striped table-responsive hiden">
+<div class="table-striped table-responsive">
     <table class="table">
     <thead class="thead-light">
         <tr>

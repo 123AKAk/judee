@@ -47,8 +47,8 @@ class Sales
     {
         $db_handle = $this->connection()->open();
 
-        $astmt = $db_handle->prepare("SELECT * FROM sales WHERE id=:id");
-        $astmt->execute(['id' => $this->SharedComponents()->unprotect($idds)]);
+        $astmt = $db_handle->prepare("SELECT * FROM sales WHERE user_id=:user_id");
+        $astmt->execute(['user_id' => $this->SharedComponents()->unprotect($idds)]);
         $item = $astmt->fetch();
 
         $SalesData = $this->sales();

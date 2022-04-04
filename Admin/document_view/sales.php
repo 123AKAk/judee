@@ -9,9 +9,69 @@
 
     $sharedComponentsModel = new SharedComponents();
     $salesModel = new Sales();
+
+    define("ROW_PER_PAGE",10);
+    
+    $database_username = 'root';
+	$database_password = '';
+	$pdo_conn = new PDO( 'mysql:host=localhost;dbname=eyocommerce', $database_username, $database_password );
 ?>
 
+<style>
+.button_link {color:#FFF;text-decoration:none; background-color:#428a8e;padding:10px;}
+#keyword{border: #CCC 1px solid; border-radius: 4px; padding: 7px;background:url("demo-search-icon.png") no-repeat center right 7px; color:gray; width:30%; float:right;}
+#keyword:focus {outline: 1px solid gray; }
+.btn-page{margin-right:10px;padding:5px 10px; border: #CCC 1px solid; background:#FFF; border-radius:4px;cursor:pointer;}
+.btn-page:hover{background:#F0F0F0;}
+.btn-page.current{background:#F0F0F0;}
+</style>
+
 <body id="page-top">
+
+<?php	
+	$search_keyword = '';
+	if(!empty($_POST['search']['keyword'])) {
+		$search_keyword = $_POST['search']['keyword'];
+	}
+	
+	$sql = 'SELECT * FROM sales WHERE sales_date LIKE :keyword OR transaction_id LIKE :keyword ORDER BY id DESC ';
+	
+	/* Pagination Code starts */
+	$per_page_html = '';
+	$page = 1;
+	$start=0;
+	if(!empty($_POST["page"])) {
+		$page = $_POST["page"];
+		$start=($page-1) * ROW_PER_PAGE;
+	}
+	$limit=" limit " . $start . "," . ROW_PER_PAGE;
+	$pagination_statement = $pdo_conn->prepare($sql);
+	$pagination_statement->bindValue(':keyword', '%' . $search_keyword . '%', PDO::PARAM_STR);
+	$pagination_statement->execute();
+
+	$row_count = $pagination_statement->rowCount();
+	if(!empty($row_count)){
+		$per_page_html .= "<div style='text-align:center;margin:20px 0px;'>";
+
+		$page_count=ceil($row_count/ROW_PER_PAGE);
+		if($page_count>1) {
+			for($i=1;$i<=$page_count;$i++){
+				if($i==$page){
+					$per_page_html .= '<input type="submit" name="page" value="' . $i . '" class="btn-page current" />';
+				} else {
+					$per_page_html .= '<input type="submit" name="page" value="' . $i . '" class="btn-page" />';
+				}
+			}
+		}
+		$per_page_html .= "</div>";
+	}
+	
+	$query = $sql.$limit;
+	$pdo_statement = $pdo_conn->prepare($query);
+	$pdo_statement->bindValue(':keyword', '%' . $search_keyword . '%', PDO::PARAM_STR);
+	$pdo_statement->execute();
+	$result = $pdo_statement->fetchAll();
+?>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -47,6 +107,14 @@
                         </h1>
                     </div>
                         <div class="table-striped table-responsive">
+                        <form name='frmSearch' action='' method='post'>
+                        <div style='text-align:right;margin:20px 0px;'>
+                            <input class="mb-2" placeholder="Search Keyword" type='text' name='search[keyword]' value="<?php echo $search_keyword; ?>" id='keyword' maxlength='35'/>
+                        </div>
+                        <?php
+                            if(!empty($result)) 
+                            {
+                        ?>
                         <table class="table">
                             <thead>
                                 <tr>
@@ -58,19 +126,29 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                $sales = $sharedmodel->getData("SELECT * FROM sales ORDER BY id ASC");
-
-                                if (!empty($sales))
-                                {
+                            <?php
                                     $num = 0;
-                                    foreach($sales as $item)
+                                    foreach($result as $row) 
                                     {
-                                        $salesid = $sharedmodel->protect($item["id"]);
-                                        $user_id = $item["user_id"];
-                                        $amount = $item["amount"];
-                                        $transaction_id = $item["transaction_id"];
-                                        $sales_date = $item["sales_date"];
+                                        $salesid = $sharedmodel->protect($row['id']);
+                                        $user_id = $row['user_id'];
+                                        $amount = $row['amount'];
+                                        $transaction_id = $row['transaction_id'];
+                                        $sales_date = $row['sales_date'];
+
+                                //**
+                                // OLD PHP CODE FOR GETTING DATA FROM DB
+                                // $sales = $sharedmodel->getData("SELECT * FROM sales ORDER BY id ASC");
+
+                                // if (!empty($sales))
+                                // {
+                                //     foreach($sales as $item)
+                                //     {
+                                //         $salesid = $sharedmodel->protect($item["id"]);
+                                //         $user_id = $item["user_id"];
+                                //         $amount = $item["amount"];
+                                //         $transaction_id = $item["transaction_id"];
+                                //         $sales_date = $item["sales_date"];
 
                                         $sales_date = new DateTime($sales_date);
                                         $date = $sales_date->format('d')." ".$sales_date->format('M')."' ". $sales_date->format('y');
@@ -85,11 +163,12 @@
                                         $statusername = $UserData->Fullname;
 
                                         $num++;
+
                                 ?>
                                 <tr>
                                     <td scope="row"><?php echo $num ?></td>
                                     <td>
-                                        <a href="editusers?id=<?php echo $user_id ?>" style="text-decoration:none">
+                                        <a style="text-decoration:none">
                                             <?php echo $statusername ?>
                                         </a>
                                     </td>
@@ -110,32 +189,36 @@
                                 </tr>
                                 <?php
                                     }
-                                }
-                                else
-                                {
-                                ?>
-                                <div class="col-12">
-                                    <div class="">
-                                        <div class="card-header" style="border:none">
-                                            <div class="row align-items-center" style="text-align:center;">
-                                                <div class="col">
-                                                    <!-- Title -->
-                                                    <br>
-                                                    <br>
-                                                    <br>
-                                                    <h4 class="card-header-title text-muted">
-                                                        Ooops! sorry no record at the moment
-                                                    </h4>
-                                                </div>
-                                            </div> <!-- / .row -->
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php
-                                }
                                 ?>
                             </tbody>
                             </table>
+                            <?php
+                                }
+                                else
+                                {
+                            ?>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="card-header" style="border:none">
+                                        <div class="row align-items-center" style="text-align:center;">
+                                            <div class="col">
+                                                <!-- Title -->
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <h4 class="card-header-title text-muted">
+                                                    Ooops! sorry no record at the moment
+                                                </h4>
+                                            </div>
+                                        </div> <!-- / .row -->
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                            }
+                            ?>
+                            <?php echo $per_page_html; ?>
+                            </form>
                         </div>
                     </div>
                 </div>

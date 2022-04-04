@@ -124,14 +124,15 @@
                                 <form enctype="multipart/form-data" action="system/controller/userRequest_handler_get.php" class="user" data-ajax-method="POST" data-ajax="true" data-ajax-complete="main.AjaxOnComplete2" data-ajax-begin="main.AjaxOnBegin2" data-ajax-success="<?php echo (!empty($_SESSION['user'])) ? "main.AjaxOnAddingSucess" : "main.AjaxOnAddingSucess2"; ?>" data-ajax-failure="main.AjaxOnfailure" id="billingdetails">
 
                                     <input type="text" name="namespace" id="namespace" class="d-none" value="<?php echo (!empty($_SESSION['user'])) ? "updatebillingdetails" : "addbillingdetails"; ?>" hidden/>
-                                    <input type="text" name="id" class="d-none" value="<?php echo (!empty($_SESSION['user'])) ? $userid : 0; ?>" hidden/>
+
+                                    <input type="text" name="id" id="userid" class="d-none" value="<?php echo (!empty($_SESSION['user'])) ? $userid : 0; ?>" hidden/>
 
                                     <div class="single-input-item">
                                         <label for="fullname" class="required">User Name</label>
                                         <input type="text" name="fullname" id="fullname" value="<?php echo (!empty($_SESSION['user'])) ? $username : ""; ?>" placeholder="Full Name" required />
                                     </div>
 
-                                     <div class="single-input-item">
+                                    <div class="single-input-item">
                                         <label for="email" class="required">Email Address</label>
                                         <input type="email" name="email" id="email" value="<?php echo (!empty($_SESSION['user'])) ? $email : ""; ?>" placeholder="Email Address" required />
                                     </div>
@@ -231,12 +232,6 @@
                                                     $catname = implode(" ",$result = $sharedmodel->getCategoryName($category));
 
                                                     $item_price = $item["quantity"]*$price;
-
-                                                    //add data to an array
-                                                    $maindata = ['userid' => $_SESSION['user'], 'productid' => $productid, 'name' => $name, 'price' => $item_price, 'quantity' => $item["quantity"]];
-                                                    
-                                                    $datasales[] = $maindata;
-
                                             ?>
                                             <tr>
                                                 <td>
@@ -257,9 +252,6 @@
                                                     }
                                                 }
                                             ?>
-                                            <input type="hidden" id="datasale" value="<?php echo urlencode(serialize($datasales)) ?>" style="display:none">
-                                            <input type="hidden" id="userid" value="<?php echo $sharedmodel->protect($_SESSION['user']) ?>" style="display:none">
-                                            <input type="hidden" id="total_price" value="<?php echo $total_price ?>" style="display:none">
                                         </tbody>
                                         <tfoot>
                                             <tr>
@@ -297,7 +289,7 @@
                                         <div class="custom-control custom-checkbox mb-20">
                                             <input type="checkbox" class="custom-control-input" id="acceptterms" required/>
                                             <label class="custom-control-label" for="acceptterms">I have read and agree to
-                                                the website <a href="privacypolicy.php">privacy and policy.</a></label>
+                                                the website <a href="privacypolicy.php"><strong>privacy and policy</strong>.</a></label>
                                         </div>
                                         
                                         <?php
@@ -324,18 +316,6 @@
 
                                             <button onclick="testorder()" class="btn btn-sqr">Test Order</button>
 
-                                            <script>
-                                                //transfer payment details to payment successful page after payment has been made
-                                                function testorder()
-                                                {
-                                                    let datasale = document.getElementById("datasale").value;
-                                                    let userid = document.getElementById("userid").value;
-                                                    let total_price = document.getElementById("total_price").value;
-
-                                                    location.href="paymentsuccess.php?datasale="+datasale+"&transactionid=10101010&userid="+userid+"&amount="+total_price;
-                                                }
-                                            </script>
-
                                             <!-- <div id="paypal-button-container"></div> -->
                                             <!-- <div id="paypal-payment-button"></div> -->
                                             <div id="smart-button-container">
@@ -348,7 +328,7 @@
                                         }
                                         else
                                         {
-                                            echo '<div class="text-center" style="color:red;"><p>You cannot check because your cart is empty</p></div>';
+                                            echo '<div class="text-center" style="color:red;"><p>You cannot check because your Cart is Empty</p></div>';
                                         }
                                         ?>
                                     </div>
@@ -400,10 +380,10 @@
     
                 // Or go to another URL:  
 
-                let datasale = document.getElementById("datasale").value;
-                let userid = document.getElementById("userid").value;
+                // let datasale = document.getElementById("datasale").value;
+                // let userid = document.getElementById("userid").value;
 
-                actions.redirect('paymentsuccess.php?datasale='+datasale+'&transactionid=10101010&userid='+userid);
+                // actions.redirect('paymentsuccess.php?datasale='+datasale+'&transactionid=10101010&userid='+userid);
                 });
             },
     

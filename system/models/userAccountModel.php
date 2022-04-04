@@ -209,7 +209,7 @@ class Users
                     $mail->SMTPAuth = true;
                     $mail->Username = 'favourakak@gmail.com';
                     //SMTP password
-                    $mail->Password = '09035222902';
+                    $mail->Password = 'Iakak 1!A,,';
                     //Enable implicit TLS encryption
                     $mail->SMTPSecure = 'tls';
                     //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
@@ -355,7 +355,7 @@ class Users
                     $mail->Host = 'smtp.gmail.com';
                     $mail->SMTPAuth = true;
                     $mail->Username = 'favourakak@gmail.com';
-                    $mail->Password = '09035222902';
+                    $mail->Password = 'Iakak 1!A,,';
                     $mail->SMTPSecure = 'tls';
                     $mail->Port = 587;
 
@@ -372,18 +372,18 @@ class Users
 
                     $mail->send();
 
-                    $result = ['response' => true, 'message' => 'Account created Successful, access your email to activate your account'];
+                    $result = ['response' => true, 'message' => 'Account created Successful, access your email to activate your account', 'usercode' => $userid];
                 }
                 catch (Exception $eax) 
                 {
-                    return $result = ['response' => false, 'message' => 'EMAIL SENDING FAILED. INFO: '.$mail->ErrorInfo];
+                    return $result = ['response' => false, 'message' => 'EMAIL SENDING FAILED. INFO: '.$mail->ErrorInfo, 'usercode' => $userid];
                 }
             }
             return $result;
         }
 		catch(PDOException $ex)
 		{
-			return $result = ['response' => false, 'message' => $ex];
+			return $result = ['response' => false, 'message' => $ex, 'usercode' => $userid];
 		}
 		finally
 		{
