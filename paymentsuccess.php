@@ -122,7 +122,7 @@
                         }
 
                         //insert cart data to database
-                        $runcartdata = $productsModel->runCartSales(array_custom($merge));
+                        $runcartdata = $productsModel->runCartSales(array_custom($merge),$transactionid);
 
                         if (isset($runcartdata))
                         {

@@ -190,7 +190,7 @@
                                         <?php echo $date ?>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="main.LoadTeamPopUpForm('user', '<?php echo $userid ?>')" data-toggle="modal" data-target=".bd-example-modal-lg" title="View Cart Details of <?php echo $fullname ?>">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="main.LoadTeamPopUpForm('user', '<?php echo $userid ?>', '')" data-toggle="modal" data-target=".bd-example-modal-lg" title="View Cart Details of <?php echo $fullname ?>">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger" type="button" onclick="" title="Delete User <?php echo $fullname ?>" onclick="doDeleteUser('<?php echo $userid ?>')">

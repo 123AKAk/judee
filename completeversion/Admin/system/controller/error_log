@@ -1,0 +1,10 @@
+[25-Apr-2022 18:20:07 UTC] PHP Fatal error:  Uncaught Error: Cannot access private property SharedComponents::$imageProcessingError in /home/u183054958/domains/annibelcollection.com/public_html/Admin/system/custom_model/ProductModel.php:100
+Stack trace:
+#0 /home/u183054958/domains/annibelcollection.com/public_html/Admin/system/controller/request_handler_post.php(26): Products->addProduct()
+#1 {main}
+  thrown in /home/u183054958/domains/annibelcollection.com/public_html/Admin/system/custom_model/ProductModel.php on line 100
+[25-Apr-2022 18:20:56 UTC] PHP Fatal error:  Uncaught Error: Cannot access private property SharedComponents::$imageProcessingError in /home/u183054958/domains/annibelcollection.com/public_html/Admin/system/custom_model/ProductModel.php:100
+Stack trace:
+#0 /home/u183054958/domains/annibelcollection.com/public_html/Admin/system/controller/request_handler_post.php(26): Products->addProduct()
+#1 {main}
+  thrown in /home/u183054958/domains/annibelcollection.com/public_html/Admin/system/custom_model/ProductModel.php on line 100

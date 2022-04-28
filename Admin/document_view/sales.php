@@ -179,7 +179,7 @@
                                         <?php echo $date ?>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="main.LoadTeamPopUpForm('sale', '<?php echo $salesid ?>')" title="View Details" data-toggle="modal" data-target=".bd-example-modal-lg">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="main.LoadTeamPopUpForm('sale', '<?php echo $salesid ?>', '<?php echo $row['sales_date'] ?>')" title="View Details" data-toggle="modal" data-target=".bd-example-modal-lg">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger" type="button" onclick="" title="Delete Sale" onclick="doDeleteSale('<?php echo $salesid ?>')">

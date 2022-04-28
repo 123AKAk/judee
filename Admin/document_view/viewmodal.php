@@ -38,7 +38,7 @@
 <?php
     if(isset($_GET['id']))
     {
-        if($_GET['page'] == "sale")
+        if($_GET['page'] == "sale" && !empty($_GET['saledate']))
         {
 ?>
 <p style="color:darkred;">Note: If the Product name or Category is changed on the Product section it reflects here too</p>
@@ -61,18 +61,20 @@
                 $anum = 0;
                 foreach($SaleData as $item)
                 {
+                    echo $_GET['saledate']." | ".$item["sales_date"];
+                    if($_GET['saledate'] == $item["sales_date"])
+                    {
+                    //sales
+                        $userid = $item["user_id"];
+                        $saleamount = $item["amount"];
+                        $transactionid = $item["transaction_id"];
+                        $date = strtotime($item["sales_date"]);
+                        $salesdate = date('F j, Y, g:i a', $date);
 
-                //sales
-                $userid = $item["user_id"];
-                $saleamount = $item["amount"];
-                $transactionid = $item["transaction_id"];
-                $date = strtotime($item["sales_date"]);
-                $salesdate = date('F j, Y, g:i a', $date);
+                        $comparedate = $item["sales_date"];
 
-                $comparedate = $item["sales_date"];
-
-                $anum++;
-
+                        $anum++;
+                    }
 ?>
 <style>
     .bold{

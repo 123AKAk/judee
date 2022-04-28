@@ -264,14 +264,14 @@ function toogleSettingTab(tabNum) {
 }
 
 // load the modal form
-main.LoadTeamPopUpForm = function(purpose, uniqueId) 
+main.LoadTeamPopUpForm = function(purpose, uniqueId, date)
 {
     $("#loader").removeClass("d-none");
     $("#loadTeamPopUpForm").addClass("d-none");
 
     if (purpose == "sale") 
     {
-        $("#loadTeamPopUpForm").load("viewmodal.php?id=" + uniqueId + "&page=sale", function() {
+        $("#loadTeamPopUpForm").load("viewmodal.php?id=" + uniqueId + "&page=sale&saledate=" + date +"", function() {
             $("#loader").addClass("d-none");
             $("#loadTeamPopUpForm").removeClass("d-none");
         });
